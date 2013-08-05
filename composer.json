@@ -6,7 +6,7 @@
   },
   "autoload": {
     "psr-0": {
-      "Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler": "src/"
+      "Symfony": "src/"
     }
   }
 }
