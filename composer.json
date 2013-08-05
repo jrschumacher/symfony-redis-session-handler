@@ -1,0 +1,12 @@
+{
+  "name": "Symfony2 Redis Session Handler",
+  "require": {
+    "symfony/http-foundation": ">=1.0",
+    "ext-redis": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler": "src/"
+    }
+  }
+}
