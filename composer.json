@@ -1,5 +1,5 @@
 {
-  "name": "Symfony2 Redis Session Handler",
+  "name": "jrschumacher/symfony-redis-session-handler",
   "require": {
     "symfony/http-foundation": ">=1.0",
     "ext-redis": "*"
