@@ -21,6 +21,5 @@
   },
   "autoload": {
       "psr-0": { "Symfony": "./src" }
-  },
-  "target-dir": "Symfony/Component/HttpFoundation"
+  }
 }
