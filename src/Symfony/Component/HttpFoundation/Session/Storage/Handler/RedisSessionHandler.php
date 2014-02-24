@@ -15,6 +15,7 @@ namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
  * RedisSessionHandler
  *
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
+ * @author Ryan Schumacher <ryan@38pages.com>
  */
 class RedisSessionHandler implements \SessionHandlerInterface
 {
@@ -29,15 +30,35 @@ class RedisSessionHandler implements \SessionHandlerInterface
     private $lifetime;
 
     /**
-     * Constructor
-     *
-     * @param \Redis $redis     The redis instance
-     * @param integer $lifetime Max lifetime in seconds to keep sessions stored.
+     * @var array
      */
-    public function __construct(\Redis $redis, $lifetime)
+    private $options;
+
+    /**
+     * Constructor
+     * 
+     * List of available options:
+     *  * key_prefix: The key prefix [default: '']
+     *
+     * @param \Redis $redis The redis instance
+     * @param integer $lifetime Max lifetime in seconds to keep sessions stored.
+     * @param array $options Options for the session handler
+     * 
+     * @throws \InvalidArgumentException When Redis instance not provided
+     */
+    public function __construct($redis, $lifetime, array $options = array())
     {
+        if (!$redis instanceof \Redis) {
+            throw new \InvalidArgumentException('Redis instance required');
+        }
+
         $this->redis = $redis;
         $this->lifetime = $lifetime;
+
+        if(!is_array($options)) $options = array();
+        $this->options = array_merge(array(
+            'key_prefix' => ''
+        ), $options);
     }
 
     /**
@@ -52,8 +73,9 @@ class RedisSessionHandler implements \SessionHandlerInterface
      * {@inheritDoc}
      */
     public function read($sessionId)
-    {
-        return (string) $this->redis->get($sessionId);
+    {   
+        $key = $this->getKey($sessionId);
+        return (string) $this->redis->get($key);
     }
 
     /**
@@ -61,7 +83,8 @@ class RedisSessionHandler implements \SessionHandlerInterface
      */
     public function write($sessionId, $data)
     {
-        return $this->redis->setex($sessionId, $this->lifetime, $data);
+        $key = $this->getKey($sessionId);
+        return $this->redis->setex($key, $this->lifetime, $data);
     }
 
     /**
@@ -69,7 +92,8 @@ class RedisSessionHandler implements \SessionHandlerInterface
      */
     public function destroy($sessionId)
     {
-        return 1 === $this->redis->delete($sessionId);
+        $key = $this->getKey($sessionId);
+        return 1 === $this->redis->delete($key);
     }
 
     /**
@@ -77,6 +101,9 @@ class RedisSessionHandler implements \SessionHandlerInterface
      */
     public function gc($lifetime)
     {
+        /* Note: Redis will handle the expiration of keys with SETEX command
+         * See: http://redis.io/commands/setex
+         */
         return true;
     }
 
@@ -86,5 +113,18 @@ class RedisSessionHandler implements \SessionHandlerInterface
     public function close()
     {
         return true;
+    }
+
+    /**
+     * Get the redis key
+     * 
+     * @param string $sessionId session id
+     */
+    protected function getKey($sessionId)
+    {
+        if(is_string($this->options['key_prefix'])) {
+            return $this->options['key_prefix'].$sessionId;
+        }
+        return $sessionId;
     }
 }

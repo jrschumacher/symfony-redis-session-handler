@@ -1,12 +1,26 @@
 {
   "name": "jrschumacher/symfony-redis-session-handler",
+  "type": "library",
+  "description": "Redis Session Handler Symfony HttpFoundation Component",
+  "keywords": ["symfony", "session", "redis"],
+  "homepage": "http://symfony.com",
+  "license": "MIT",
+  "authors": [
+      {
+          "name": "Markus Bachmann",
+          "email": "markus.bachmann@bachi.biz"
+      },
+      {
+          "name": "Ryan Schumacher",
+          "email": "ryan@38pages.com"
+      }
+  ],
   "require": {
-    "symfony/http-foundation": ">=1.0",
-    "ext-redis": "*"
+      "symfony/http-foundation": ">=1.0",
+      "ext-redis": "*"
   },
   "autoload": {
-    "psr-0": {
-      "Symfony": "src/"
-    }
-  }
+      "psr-0": { "Symfony": "./src" }
+  },
+  "target-dir": "Symfony/Component/HttpFoundation"
 }
