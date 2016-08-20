@@ -40,7 +40,7 @@ class RedisSessionHandler implements \SessionHandlerInterface
      * List of available options:
      *  * key_prefix: The key prefix [default: '']
      *
-     * @param \Redis $redis The redis instance
+     * @param \Redis|\Credis_Client $redis The redis instance
      * @param integer $lifetime Max lifetime in seconds to keep sessions stored.
      * @param array $options Options for the session handler
      * 
@@ -48,7 +48,7 @@ class RedisSessionHandler implements \SessionHandlerInterface
      */
     public function __construct($redis, $lifetime, array $options = array())
     {
-        if (!$redis instanceof \Redis) {
+        if (!$redis instanceof \Redis || !$redis instanceof \Credis_Client) {
             throw new \InvalidArgumentException('Redis instance required');
         }
 
